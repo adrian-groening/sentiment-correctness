@@ -23,7 +23,7 @@ def get_news(ticker):
     req = Request(url=url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}) 
     response = urlopen(req)    
     # Read the contents of the file into 'html'
-    html = BeautifulSoup(response)
+    html = BeautifulSoup(response, features="lxml")
     # Find 'news-table' in the Soup and load it into 'news_table'
     news_table = html.find(id='news-table')
     return news_table
@@ -61,7 +61,7 @@ def parse_news(news_table):
         parsed_news_df = pd.DataFrame(parsed_news, columns=columns)        
         # Create a pandas datetime object from the strings in 'date' and 'time' column
         parsed_news_df['date'] = parsed_news_df['date'].replace("Today", today_string)
-        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
+        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'], format='mixed', errors='coerce')
         
     return parsed_news_df
         
@@ -80,7 +80,7 @@ def score_news(parsed_news_df):
     # Join the DataFrames of the news and the list of dicts
     parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')        
     parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')    
-    parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], 1)          
+    parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], axis=1)          
     parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
 
     return parsed_and_scored_news
