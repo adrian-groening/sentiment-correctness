@@ -19,7 +19,7 @@ df['date'] = df['datetime'].dt.date
 daily_sentiment = df.groupby('date')['sentiment_score'].mean().reset_index()
 
 # Process price data
-df_polygon = pd.read_csv('2025-05-20_to_2025-06-30_X:BTCUSD.csv')
+df_polygon = pd.read_csv('2025-05-29_to_2025-06-30_X:BTCUSD.csv')
 df_polygon['Timestamp'] = pd.to_datetime(df_polygon['Timestamp'])
 df_polygon['date'] = df_polygon['Timestamp'].dt.date
 
@@ -108,13 +108,13 @@ sns.pairplot(features, corner=False, plot_kws={'alpha': 0.6})
 
 plt.suptitle('Scatter Matrix: Price, Sentiment, and Sentiment Accuracy', y=1.02)
 plt.tight_layout()
-#plt.savefig("scatter_matrix.png", dpi=300, bbox_inches='tight')
+plt.savefig("scatter_matrix.png", dpi=300, bbox_inches='tight')
 
 print(merged_df)
 
-ft = merged_df.drop(columns=['Timestamp', 'sentiment_correct_next_day', 'date'])
+ft = merged_df.drop(columns=['Timestamp', 'sentiment_correct', 'date'])
 X = ft
-y = merged_df['sentiment_correct_next_day']
+y = merged_df['sentiment_correct']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -133,8 +133,5 @@ y_pred = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 
-
-
-
-
-
+# save dataset to CSV
+merged_df.to_csv('merged_btc_sentiment_data.csv', index=False)

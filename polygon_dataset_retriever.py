@@ -61,7 +61,7 @@ def generate_aggs_csv(from_date, to_date, date_expansion, ticker="X:BTCUSD"):
     return aggs
 
 
-generate_aggs_csv("2025-05-20", "2025-05-20", "2025-06-30")
+generate_aggs_csv("2025-05-29", "2025-05-29", "2025-07-01")
 
 #day = "2025-06-12"
 #d1 = get_aggs_csv(day, day, "2025-06-13")
